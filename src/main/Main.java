@@ -17,19 +17,19 @@ public class Main {
 
         DividerInstance instance = new DividerInstance("example2.txt");
 
-        /*System.out.println("--- RANDOM ---");
+        System.out.println("--- RANDOM ---");
         Constructive<DividerInstance, DividerSolution> c = new ConstRandom();
         DividerSolution s1 = c.constructSolution(instance);
-        System.out.println(s1.toString());*/
+        System.out.println(s1.toString());
 
         System.out.println("--- DIVIDER ---");
         Constructive<DividerInstance, DividerSolution> d = new ConstDivider();
         DividerSolution s2 = d.constructSolution(instance);
         System.out.println(s2.toString());
 
-        /*System.out.println("--- PERFECT ---");
+        System.out.println("--- PERFECT ---");
         Constructive<DividerInstance, DividerSolution> p = new ConstPerfect();
         DividerSolution s3 = p.constructSolution(instance);
-        System.out.println(s3.toString());*/
+        System.out.println(s3.toString());
     }
 }

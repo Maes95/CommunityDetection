@@ -30,7 +30,7 @@ public class DividerSolution implements Solution {
         clusters.get(dest).addToCluster(node);
     }
 
-    public double costToMove(int node, int src, int dest){
+    public double modularityIfMove(int node, int src, int dest){
         clusters.get(src).removeFromCluster(node);
         clusters.get(dest).addToCluster(node);
         double new_ = this.getModularity();

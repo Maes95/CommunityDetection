@@ -1,7 +1,6 @@
 package constructives;
 
 import grafo.optilib.metaheuristics.Constructive;
-import grafo.optilib.tools.RandomManager;
 import structure.Cluster;
 import structure.DividerInstance;
 import structure.DividerSolution;
@@ -31,24 +30,23 @@ public class ConstDivider implements Constructive<DividerInstance, DividerSoluti
             auxSolution.createNewCluster();
             auxSolution.moveToCluster(worstConnectedNode, cluster, cluster+1);
 
-            // GET ADJACENTS
+            // GET ADJACENT
             Queue<Integer> nodes = new ArrayDeque<>(instance.getAdjacents(worstConnectedNode));
 
-            // FOR EACH NODE, IF IT IMPROVE THE SOLUTION, SET A NEW SOLUTION
             while(nodes.size() > 0){
 
                 int node = nodes.poll();
                 computedNodes.add(node);
                 auxSolution.moveToCluster(node, cluster, cluster+1);
 
+                // IF ADD NODE (OR A SET OF NODES) IMPROVE THE MODULARITY, REPLACE SOLUTION
                 if(auxSolution.getModularity() > bestSolution.getModularity()){
                     bestSolution = new DividerSolution(auxSolution);
                 }
 
-                // ADD ADJACENTS TO NODES IF ARE CONTAINED IN CLUSTER WHICH IS DIVIDED
+                // ADD ADJACENT TO CHECK (ONLY IF THEY ARE NOT CHECKED BEFORE AND THEY ARE CONTAINED BY THE CLUSTER)
 
                 for(int toAddNode: instance.getAdjacents(node)){
-
                     Cluster c = auxSolution.getCluster(cluster);
                     if(c.contains(toAddNode) && !computedNodes.contains(toAddNode)){
                         nodes.offer(toAddNode);
