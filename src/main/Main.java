@@ -3,6 +3,7 @@ package main;
 import constructives.ConstDivider;
 import constructives.ConstPerfect;
 import constructives.ConstRandom;
+import constructives.ConstDividerGreedy;
 import grafo.optilib.metaheuristics.Constructive;
 import grafo.optilib.structure.Solution;
 import grafo.optilib.tools.RandomManager;
@@ -27,9 +28,14 @@ public class Main {
         DividerSolution s2 = d.constructSolution(instance);
         System.out.println(s2.toString());
 
+        System.out.println("--- GREEDY ---");
+        Constructive<DividerInstance, DividerSolution> g = new ConstDividerGreedy(0.1);
+        DividerSolution s3 = g.constructSolution(instance);
+        System.out.println(s3.toString());
+
         System.out.println("--- PERFECT ---");
         Constructive<DividerInstance, DividerSolution> p = new ConstPerfect();
-        DividerSolution s3 = p.constructSolution(instance);
-        System.out.println(s3.toString());
+        DividerSolution s4 = p.constructSolution(instance);
+        System.out.println(s4.toString());
     }
 }

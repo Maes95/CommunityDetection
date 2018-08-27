@@ -13,6 +13,8 @@ public class DividerInstance implements Instance {
     private Map<Integer, Integer> nodeIds;
     private int n;
     private int m;
+    private int minEdges = Integer.MAX_VALUE;
+    private int maxEdges = 0;
 
     public DividerInstance(String path) {
         readInstance(path);
@@ -40,6 +42,14 @@ public class DividerInstance implements Instance {
                 graph[src].add(dst);
                 graph[dst].add(src);
             }
+
+            for(Set<Integer> adjacents: graph){
+                int size = adjacents.size();
+                if(size > this.maxEdges)
+                    this.maxEdges = size;
+                else if(size < this.minEdges)
+                    this.minEdges = size;
+            }
             bf.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,6 +62,14 @@ public class DividerInstance implements Instance {
 
     public int getM() {
         return m;
+    }
+
+    public int getMaxEdges() {
+        return maxEdges;
+    }
+
+    public int getMinEdges() {
+        return minEdges;
     }
 
     public int getNodeID(int node) {

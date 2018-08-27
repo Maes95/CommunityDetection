@@ -1,7 +1,10 @@
 package structure;
 
+import grafo.optilib.tools.RandomManager;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 public class Cluster {
@@ -67,6 +70,10 @@ public class Cluster {
 
     public boolean contains(int node){
         return this.nodesInCluster.containsKey(node);
+    }
+
+    public int getRandomNode(){
+        return RandomManager.getRandom().nextInt(this.instance.getN()-1);
     }
 
     public int getWorstConnected(){

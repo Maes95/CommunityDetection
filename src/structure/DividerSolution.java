@@ -71,6 +71,10 @@ public class DividerSolution implements Solution {
         return clusters.get(cluster).getWorstConnected();
     }
 
+    public int getRandomNode(int cluster){
+        return clusters.get(cluster).getRandomNode();
+    }
+
     public int getClusterSize(){
         return this.clusters.size();
     }
