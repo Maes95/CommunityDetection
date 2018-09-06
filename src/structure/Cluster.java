@@ -72,8 +72,13 @@ public class Cluster {
         return this.nodesInCluster.containsKey(node);
     }
 
-    public int getRandomNode(){
-        return RandomManager.getRandom().nextInt(this.instance.getN()-1);
+    public int getRandomNode(Random rnd){
+        Object[] nodes = nodesInCluster.keySet().toArray();
+        if(nodes.length == 0){
+            return -1;
+        }else{
+            return (Integer) nodes[rnd.nextInt(nodes.length)];
+        }
     }
 
     public int getWorstConnected(){

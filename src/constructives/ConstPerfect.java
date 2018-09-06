@@ -17,7 +17,7 @@ public class ConstPerfect implements Constructive<DividerInstance, DividerSoluti
         sol.createNewCluster();
         sol.addToCluster(0,0);
         sol.addToCluster(0,1);
-        sol.addToCluster(0,2);
+        sol.addToCluster(2,2);
         sol.addToCluster(0,3);
         sol.addToCluster(0,8);
         sol.addToCluster(1,4);
