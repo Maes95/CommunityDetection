@@ -24,12 +24,13 @@ public class ConstDividerGreedy2 implements Constructive<DividerInstance, Divide
         DividerSolution bestSolution = new DividerSolution(instance);
         bestSolution.startDestructive();
 
-        for(int i = 0; i < 1; i++){
+        for(int i = 0; i < 1000; i++){
             Random rnd = new Random();
-            rnd.setSeed(649);
+            rnd.setSeed(i);
             DividerSolution newSolution = getASolution(instance, rnd);
             if(newSolution.getModularity() > bestSolution.getModularity()){
                 bestSolution = newSolution;
+                System.out.println(bestSolution);
             }
         }
 
@@ -52,56 +53,46 @@ public class ConstDividerGreedy2 implements Constructive<DividerInstance, Divide
         DividerSolution bestSolution = finalSolution;
         RestrictedList candidates = null;
         boolean firstIter = true;
-        boolean refreshCandidates = true;
         Cluster c = null;
+
+        int refactor_iters = 10;
 
 
         // FOR EACH CLUSTER (CAN BE REPEATED IF PERFORMS)
 
         // GET RANDOM NODE (FIRST TIME)
-        int baseNode = bestSolution.getRandomNode(cluster_index, rnd);
+        int baseNode;
 
-        while(cluster_index < instance.getN() - 1 && baseNode != -1) {
-
-            //System.out.println("##### ITER "+cluster_index);
+        while(cluster_index < instance.getN() - 1 && refactor_iters > 0) {
 
             // ADD NODE TO A NEW SOLUTION
             DividerSolution auxSolution = new DividerSolution(bestSolution);
             int next_cluster = auxSolution.createNewCluster();
             c = auxSolution.getCluster(cluster_index);
 
-            System.out.println(auxSolution);
-            System.out.println(cluster_index);
-            System.out.println("CLUSTER: "+auxSolution.getCluster(cluster_index));
-
             if(firstIter){
                 baseNode = c.getRandomNode(rnd);
-                System.out.println("RANDOM NODE FI "+baseNode);
                 firstIter = false;
             }else{
-                if(refreshCandidates) candidates = new RestrictedList(instance, auxSolution.getCluster(cluster_index), mu, rnd);
-                //refreshCandidates = false;
-
-                System.out.println("CANDIDATES:"+candidates);
+                candidates = new RestrictedList(instance, auxSolution.getCluster(cluster_index), mu, rnd);
                 if(!candidates.isEmpty()){
                     baseNode = candidates.getNode();
-                    System.out.println("GET NODE "+ baseNode);
                 }else{
                     baseNode = c.getRandomNode(rnd);
-                    System.out.println("RANDOM NODE NOC "+baseNode);
                 }
 
             }
 
-            if(baseNode == -1) break;
+            if(baseNode == -1){
+                cluster_index = 0;
+                refactor_iters--;
+                continue;
+            };
 
             auxSolution.moveToCluster(baseNode, cluster_index, next_cluster);
 
             // GET ADJACENT
             Queue<Integer> adjacents = new ArrayDeque<>(instance.getAdjacents(baseNode));
-
-            System.out.println(c);
-            System.out.println(baseNode + adjacents.toString());
 
             while(adjacents.size() > 0){
 
@@ -110,12 +101,10 @@ public class ConstDividerGreedy2 implements Constructive<DividerInstance, Divide
                 if(!auxSolution.getCluster(cluster_index).contains(node)) continue;
 
                 computedNodes.add(node);
-                auxSolution.moveToCluster(node, cluster_index, cluster_index+1);
+                auxSolution.moveToCluster(node, cluster_index, next_cluster);
 
                 // IF ADD NODE (OR A SET OF NODES) IMPROVE THE MODULARITY, REPLACE SOLUTION
-                System.out.println(auxSolution.getModularity() +">"+ bestSolution.getModularity());
                 if(auxSolution.getModularity() > bestSolution.getModularity()){
-
                     bestSolution = new DividerSolution(auxSolution);
                 }
 

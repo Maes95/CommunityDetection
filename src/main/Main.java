@@ -24,7 +24,7 @@ public class Main {
         System.out.println(s2.toString());*/
 
         System.out.println("--- GREEDY ---");
-        Constructive<DividerInstance, DividerSolution> g = new ConstDividerGreedy2(0.9);
+        Constructive<DividerInstance, DividerSolution> g = new ConstDividerGreedy2(0.01);
         DividerSolution s3 = g.constructSolution(instance);
         System.out.println(s3.toString());
 
