@@ -15,8 +15,6 @@ public class LocalSearch implements Improvement<DividerSolution> {
             Cluster cluster = best.getCluster(cluster_index);
             CandidateList candidates = new CandidateList(best.getInstance(), cluster);
 
-            boolean improve = false;
-
             while(!candidates.isEmpty()){
                 int candidate = candidates.getNode();
                 DividerSolution aux = new DividerSolution(best);
@@ -36,11 +34,8 @@ public class LocalSearch implements Improvement<DividerSolution> {
                     // CHECK IF MOVE IMPROVES MODULARITY (SAVE SOLUTION IF IMPROVES MODULARITY)
                     if(aux.getModularity() > best.getModularity()){
                         best = aux;
-                        improve = true;
-                        //break;
                         aux = new DividerSolution(best);
                     }
-
 
                     // UNDO MOVE TO CHECK OTHER WAYS
                     aux.moveToCluster(candidate, cluster_to_move_index, cluster_index);
@@ -54,6 +49,6 @@ public class LocalSearch implements Improvement<DividerSolution> {
         }
 
         best.removeEmptyClusters();
-        System.out.println(best);
+        dividerSolution.copy(best);
     }
 }

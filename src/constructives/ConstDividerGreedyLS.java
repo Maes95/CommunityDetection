@@ -12,10 +12,12 @@ public class ConstDividerGreedyLS implements Constructive<DividerInstance, Divid
 
     private double alpha;
     private double mu;
+    private LocalSearch local_search;
 
     public ConstDividerGreedyLS(double alpha){
         this.alpha = alpha;
         this.mu = 0.0;
+        this.local_search  = new LocalSearch();
     }
 
     @Override
@@ -24,10 +26,13 @@ public class ConstDividerGreedyLS implements Constructive<DividerInstance, Divid
         DividerSolution bestSolution = new DividerSolution(instance);
         bestSolution.startDestructive();
 
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 10; i++){
             Random rnd = new Random();
             rnd.setSeed(i);
             DividerSolution newSolution = getASolution(instance, rnd);
+
+            local_search.improve(newSolution);
+
             if(newSolution.getModularity() > bestSolution.getModularity()){
                 bestSolution = newSolution;
             }
@@ -120,7 +125,6 @@ public class ConstDividerGreedyLS implements Constructive<DividerInstance, Divid
             if(bestSolution.getModularity() > finalSolution.getModularity()){
                 // IF SOLUTION IMPROVES
                 finalSolution = new DividerSolution(bestSolution);
-
             }
 
             cluster_index++;

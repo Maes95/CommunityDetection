@@ -9,7 +9,7 @@ import structure.DividerSolution;
 public class Main {
 
     public static void main(String[] args) {
-        RandomManager.setSeed(21);
+        RandomManager.setSeed(123);
 
         DividerInstance instance = new DividerInstance("example3.txt");
 
@@ -33,15 +33,19 @@ public class Main {
         DividerSolution s4 = g2.constructSolution(instance);
         System.out.println(s4.toString());*/
 
+        long start = System.currentTimeMillis();
+
         System.out.println("--- GREEDY LOCAL SEARCH ---");
         Constructive<DividerInstance, DividerSolution> ls = new ConstDividerGreedyLS(0.01);
         DividerSolution s5 = ls.constructSolution(instance);
         System.out.println(s5.toString());
 
         System.out.println("---------------");
+        long total = System.currentTimeMillis() - start;
+        System.out.println("TOTAL TIME: "+total);
 
-        LocalSearch local_search = new LocalSearch();
-        local_search.improve(s5);
+
+
 
 
 

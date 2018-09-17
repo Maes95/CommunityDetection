@@ -14,10 +14,12 @@ public class CandidateList {
             if(!cluster.contains(nodeID)) continue;
             Iterable<Integer> adjacent = instance.getAdjacents(nodeID);
             int numExtEdges = 0;
+            int totalEdges = 0;
             for(int adj: adjacent){
                 if(!cluster.contains(adj)) numExtEdges++;
+                totalEdges++;
             }
-            candidates.add(new Candidate(nodeID, numExtEdges));
+            candidates.add(new Candidate(nodeID, numExtEdges/totalEdges));
         }
         Collections.sort(candidates, Comparator.comparing(Candidate::getNumExtEdges));
     }

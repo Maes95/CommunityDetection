@@ -21,6 +21,14 @@ public class DividerSolution implements Solution {
         }
     }
 
+    public void copy(DividerSolution solution){
+        this.instance = solution.instance;
+        this.clusters = new ArrayList<>(solution.clusters.size());
+        for(Cluster cluster: solution.clusters){
+            this.clusters.add(new Cluster(cluster));
+        }
+    }
+
     public int createNewCluster() {
         clusters.add(new Cluster(this.instance));
         return clusters.size()-1;
