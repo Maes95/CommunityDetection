@@ -96,6 +96,10 @@ public class DividerSolution implements Solution {
         }
     }
 
+    public DividerInstance getInstance(){
+        return this.instance;
+    }
+
     @Override
     public String toString() {
         String s = "";

@@ -8,12 +8,12 @@ import structure.RestrictedList;
 
 import java.util.*;
 
-public class ConstDividerGreedy2 implements Constructive<DividerInstance, DividerSolution> {
+public class ConstDividerGreedyLS implements Constructive<DividerInstance, DividerSolution> {
 
     private double alpha;
     private double mu;
 
-    public ConstDividerGreedy2(double alpha){
+    public ConstDividerGreedyLS(double alpha){
         this.alpha = alpha;
         this.mu = 0.0;
     }
@@ -124,39 +124,6 @@ public class ConstDividerGreedy2 implements Constructive<DividerInstance, Divide
             }
 
             cluster_index++;
-
-            /*if(candidates == null){
-                cluster_index++;
-            }else{
-                if(candidates.isEmpty()){
-                    refreshCandidates = true;
-                    cluster_index++;
-                }else{
-
-                }
-            }*/
-
-
-
-            /*if(candidates != null && !candidates.isEmpty()){
-                // GET NEXT NODE TO MOVE (FROM RESTRICTED LIST)
-                System.out.println("GET NODE");
-                baseNode = candidates.getNode();
-            }else{
-                // IF EMPTY, CHECK NEXT CLUSTER AND GET RANDOM NODE
-                cluster_index++;
-                Cluster x = bestSolution.getCluster(cluster_index);
-                if(x == null){
-                    // TODAS ACABAN EN UN CLUSTER INNACESIBLE, ¿POR QUÉ? -> NO MEJORA
-                    //cluster_index--; -> SE QUEDA EN BUCLE
-                    // CAMBIAR AL CLUSTER MÁS GRANDE?
-                    break;
-                }else{
-                    baseNode = x.getRandomNode(rnd);
-                }
-
-
-            }*/
 
             computedNodes = new HashSet<>();
 
