@@ -80,6 +80,15 @@ public class DividerSolution implements Solution {
         return modularity;
     }
 
+    public double getConductance() {
+        double acum = 0;
+        for(Cluster cluster: clusters){
+            acum+=cluster.getConductance();
+        }
+        double conductance = 1 - ( acum / clusters.size() );
+        return conductance;
+    }
+
     public int getWorstConnected(int cluster){
         return clusters.get(cluster).getWorstConnected();
     }
@@ -114,7 +123,8 @@ public class DividerSolution implements Solution {
         for(Cluster cluster: clusters){
             s += clusters.indexOf(cluster) + "->" + cluster.toString()+"\n";
         }
-        s+="Modularity: "+getModularity();
+        s+="Modularity: "+getModularity()+"\n";
+        s+="Conductance: "+getConductance()+"\n";
         return s;
     }
 }

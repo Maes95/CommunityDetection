@@ -12,12 +12,14 @@ public class Cluster {
     private final Map<Integer, Set<Integer>> nodesInCluster;
     private final DividerInstance instance;
     private double currentModularity;
+    private double currentConductance;
     private boolean needUpdate;
 
     public Cluster(DividerInstance instance){
         this.nodesInCluster = new HashMap<>();
         this.instance = instance;
         this.currentModularity = 0;
+        this.currentConductance = 0;
         this.needUpdate = false;
     }
 
@@ -42,30 +44,89 @@ public class Cluster {
     }
 
     public double getModularity(){
+        updateAll();
+        return this.currentModularity;
+    }
+
+    public double getConductance(){
+        int oneBindingEdges = 0;
+        int twoBindingEdges = 0;
+        for(Set<Integer> adjacent: this.nodesInCluster.values())
+            for(int node : adjacent)
+                if(!this.nodesInCluster.containsKey(node))
+                    oneBindingEdges++;
+                else
+                    twoBindingEdges++;
+
+        // The number of edges that connect vertices of different clusters
+        int conectedWithOtherClusters = oneBindingEdges;
+
+        // Number of edges with an endpoint in the cluster
+        int withEndpoint = oneBindingEdges + twoBindingEdges;
+
+        // Number of edges with no endpoint in the cluster
+        int withoutEndpoint = this.instance.getM() - oneBindingEdges;
+
+        this.currentConductance = conectedWithOtherClusters / Double.min(withEndpoint, withoutEndpoint);
+
+        return Double.isNaN(this.currentConductance) ? 0.0 : this.currentConductance;
+    }
+
+
+    private void updateAll(){
         if(this.needUpdate){
-            double twoBindingEdges = 0;
-            double oneBindingEdges = 0;
-            for(Set<Integer> adjacent: this.nodesInCluster.values())
-                for(int node : adjacent)
-                    if(this.nodesInCluster.containsKey(node))
-                        twoBindingEdges++;
-                    else
-                        oneBindingEdges++;
-
-            // Total edges of cluster nodes
-            double totalEdges = oneBindingEdges + twoBindingEdges;
-
-            // Fraction of the edges that fall within the given community
-            double inEndEdgeFraction = twoBindingEdges / (2*instance.getM());
-
-            // Fraction of ends of edges that are attached to vertices in this community
-            double outEndEdgeFraction = totalEdges / (2*instance.getM());
-
-            this.currentModularity = inEndEdgeFraction - (outEndEdgeFraction*outEndEdgeFraction);
+            setModularity();
             this.needUpdate = false;
         }
+    }
 
-        return this.currentModularity;
+    /*private void setConductance(){
+
+        int oneBindingEdges = 0;
+        int twoBindingEdges = 0;
+        for(Set<Integer> adjacent: this.nodesInCluster.values())
+            for(int node : adjacent)
+                if(!this.nodesInCluster.containsKey(node))
+                    oneBindingEdges++;
+                else
+                    twoBindingEdges++;
+
+        // The number of edges that connect vertices of different clusters
+        int conectedWithOtherClusters = oneBindingEdges;
+
+        // Number of edges with an endpoint in the cluster
+        int withEndpoint = oneBindingEdges + twoBindingEdges;
+
+        // Number of edges with no endpoint in the cluster
+        int withoutEndpoint = this.instance.getM() - oneBindingEdges;
+
+        //System.out.println(conectedWithOtherClusters + "/ Double.min("+withEndpoint+","+ withoutEndpoint+");");
+
+        this.currentConductance = conectedWithOtherClusters / Double.min(withEndpoint, withoutEndpoint);
+        if(Double.isNaN(this.currentConductance)) this.currentConductance = 0.0;
+        System.out.println(this.currentConductance);
+    }*/
+
+    private void setModularity(){
+        double twoBindingEdges = 0;
+        double oneBindingEdges = 0;
+        for(Set<Integer> adjacent: this.nodesInCluster.values())
+            for(int node : adjacent)
+                if(this.nodesInCluster.containsKey(node))
+                    twoBindingEdges++;
+                else
+                    oneBindingEdges++;
+
+        // Total edges of cluster nodes
+        double totalEdges = oneBindingEdges + twoBindingEdges;
+
+        // Fraction of the edges that fall within the given community
+        double inEndEdgeFraction = twoBindingEdges / (2*instance.getM());
+
+        // Fraction of ends of edges that are attached to vertices in this community
+        double outEndEdgeFraction = totalEdges / (2*instance.getM());
+
+        this.currentModularity = inEndEdgeFraction - (outEndEdgeFraction*outEndEdgeFraction);
     }
 
     public boolean contains(int node){
