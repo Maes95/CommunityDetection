@@ -58,6 +58,8 @@ public class Cluster {
                 else
                     twoBindingEdges++;
 
+        twoBindingEdges/=2;
+
         // The number of edges that connect vertices of different clusters
         int conectedWithOtherClusters = oneBindingEdges;
 
@@ -73,6 +75,15 @@ public class Cluster {
     }
 
 
+    public double getCoverage(){
+        int twoBindingEdges = 0;
+        for(Set<Integer> adjacent: this.nodesInCluster.values())
+            for(int node : adjacent)
+                if(this.nodesInCluster.containsKey(node))
+                    twoBindingEdges++;
+        return twoBindingEdges/2;
+    }
+
     private void updateAll(){
         if(this.needUpdate){
             setModularity();
@@ -80,42 +91,19 @@ public class Cluster {
         }
     }
 
-    /*private void setConductance(){
-
-        int oneBindingEdges = 0;
-        int twoBindingEdges = 0;
-        for(Set<Integer> adjacent: this.nodesInCluster.values())
-            for(int node : adjacent)
-                if(!this.nodesInCluster.containsKey(node))
-                    oneBindingEdges++;
-                else
-                    twoBindingEdges++;
-
-        // The number of edges that connect vertices of different clusters
-        int conectedWithOtherClusters = oneBindingEdges;
-
-        // Number of edges with an endpoint in the cluster
-        int withEndpoint = oneBindingEdges + twoBindingEdges;
-
-        // Number of edges with no endpoint in the cluster
-        int withoutEndpoint = this.instance.getM() - oneBindingEdges;
-
-        //System.out.println(conectedWithOtherClusters + "/ Double.min("+withEndpoint+","+ withoutEndpoint+");");
-
-        this.currentConductance = conectedWithOtherClusters / Double.min(withEndpoint, withoutEndpoint);
-        if(Double.isNaN(this.currentConductance)) this.currentConductance = 0.0;
-        System.out.println(this.currentConductance);
-    }*/
-
     private void setModularity(){
+
         double twoBindingEdges = 0;
         double oneBindingEdges = 0;
-        for(Set<Integer> adjacent: this.nodesInCluster.values())
-            for(int node : adjacent)
+        for(Integer key: this.nodesInCluster.keySet()){
+            Set<Integer> adjacent = this.nodesInCluster.get(key);
+            for(int node : adjacent){
                 if(this.nodesInCluster.containsKey(node))
                     twoBindingEdges++;
                 else
                     oneBindingEdges++;
+            }
+        }
 
         // Total edges of cluster nodes
         double totalEdges = oneBindingEdges + twoBindingEdges;

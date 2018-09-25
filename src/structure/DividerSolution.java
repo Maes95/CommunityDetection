@@ -89,6 +89,14 @@ public class DividerSolution implements Solution {
         return conductance;
     }
 
+    public double getCoverage() {
+        double coverage = 0;
+        for(Cluster cluster: clusters){
+            coverage+=cluster.getCoverage();
+        }
+        return coverage/this.instance.getM();
+    }
+
     public int getWorstConnected(int cluster){
         return clusters.get(cluster).getWorstConnected();
     }
@@ -123,8 +131,9 @@ public class DividerSolution implements Solution {
         for(Cluster cluster: clusters){
             s += clusters.indexOf(cluster) + "->" + cluster.toString()+"\n";
         }
-        s+="Modularity: "+getModularity()+"\n";
+        s+="Modularity: "+ getModularity()+"\n";
         s+="Conductance: "+getConductance()+"\n";
+        s+="Coverage: "+getCoverage()+"\n";
         return s;
     }
 }
