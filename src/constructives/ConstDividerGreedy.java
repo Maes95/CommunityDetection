@@ -7,11 +7,16 @@ import structure.DividerSolution;
 import structure.RestrictedList;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 
 public class ConstDividerGreedy implements Constructive<DividerInstance, DividerSolution> {
 
-    private double alpha;
-    private double mu;
+    protected double alpha;
+    protected double mu;
+
+    public ConstDividerGreedy(){}
 
     public ConstDividerGreedy(double alpha){
         this.alpha = alpha;
@@ -20,23 +25,10 @@ public class ConstDividerGreedy implements Constructive<DividerInstance, Divider
 
     @Override
     public DividerSolution constructSolution(DividerInstance instance) {
-
-        DividerSolution bestSolution = new DividerSolution(instance);
-        bestSolution.startDestructive();
-
-        for(int i = 0; i < 100; i++){
-            Random rnd = new Random();
-            rnd.setSeed(i);
-            DividerSolution newSolution = getASolution(instance, rnd);
-            if(newSolution.getModularity() > bestSolution.getModularity()){
-                bestSolution = newSolution;
-            }
-        }
-
-        return  bestSolution;
+        return this.getASolution(instance, new Random());
     }
 
-    private DividerSolution getASolution(DividerInstance instance, Random rnd){
+    protected DividerSolution getASolution(DividerInstance instance, Random rnd){
 
         DividerSolution finalSolution = new DividerSolution(instance);
         finalSolution.startDestructive();
@@ -50,21 +42,42 @@ public class ConstDividerGreedy implements Constructive<DividerInstance, Divider
         Set<Integer> computedNodes = new HashSet<>();
 
         DividerSolution bestSolution = finalSolution;
-        RestrictedList candidates = null;
+        boolean firstIter = true;
         Cluster c = null;
+
+        int refactor_iters = 10;
 
 
         // FOR EACH CLUSTER (CAN BE REPEATED IF PERFORMS)
 
         // GET RANDOM NODE (FIRST TIME)
-        int baseNode = bestSolution.getRandomNode(cluster_index, rnd);
+        int baseNode;
 
-        while(cluster_index < instance.getN() - 1 && baseNode != -1) {
+        while(cluster_index < instance.getN() - 1 && refactor_iters > 0) {
 
             // ADD NODE TO A NEW SOLUTION
             DividerSolution auxSolution = new DividerSolution(bestSolution);
             int next_cluster = auxSolution.createNewCluster();
             c = auxSolution.getCluster(cluster_index);
+
+            if(firstIter){
+                baseNode = c.getRandomNode(rnd);
+                firstIter = false;
+            }else{
+                RestrictedList candidates = new RestrictedList(instance, auxSolution.getCluster(cluster_index), mu, rnd);
+                if(!candidates.isEmpty()){
+                    baseNode = candidates.getNode();
+                }else{
+                    baseNode = c.getRandomNode(rnd);
+                }
+
+            }
+
+            if(baseNode == -1){
+                cluster_index = 0;
+                refactor_iters--;
+                continue;
+            };
 
             auxSolution.moveToCluster(baseNode, cluster_index, next_cluster);
 
@@ -75,10 +88,10 @@ public class ConstDividerGreedy implements Constructive<DividerInstance, Divider
 
                 int node = adjacents.poll();
 
-                if(!c.contains(node)) continue;
+                if(!auxSolution.getCluster(cluster_index).contains(node)) continue;
 
                 computedNodes.add(node);
-                auxSolution.moveToCluster(node, cluster_index, cluster_index+1);
+                auxSolution.moveToCluster(node, cluster_index, next_cluster);
 
                 // IF ADD NODE (OR A SET OF NODES) IMPROVE THE MODULARITY, REPLACE SOLUTION
                 if(auxSolution.getModularity() > bestSolution.getModularity()){
@@ -101,25 +114,7 @@ public class ConstDividerGreedy implements Constructive<DividerInstance, Divider
 
             }
 
-            if(candidates != null && !candidates.isEmpty()){
-                // GET NEXT NODE TO MOVE (FROM RESTRICTED LIST)
-                System.out.println("GET NODE");
-                baseNode = candidates.getNode();
-            }else{
-                // IF EMPTY, CHECK NEXT CLUSTER AND GET RANDOM NODE
-                cluster_index++;
-                Cluster x = bestSolution.getCluster(cluster_index);
-                if(x == null){
-                    // TODAS ACABAN EN UN CLUSTER INNACESIBLE, ¿POR QUÉ? -> NO MEJORA
-                    //cluster_index--; -> SE QUEDA EN BUCLE
-                    // CAMBIAR AL CLUSTER MÁS GRANDE?
-                    break;
-                }else{
-                    baseNode = x.getRandomNode(rnd);
-                }
-
-
-            }
+            cluster_index++;
 
             computedNodes = new HashSet<>();
 

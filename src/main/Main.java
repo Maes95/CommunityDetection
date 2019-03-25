@@ -1,17 +1,31 @@
 package main;
 
+import algorithms.AlgorithmExecutor;
 import constructives.*;
 import grafo.optilib.metaheuristics.Constructive;
 import grafo.optilib.tools.RandomManager;
 import structure.DividerInstance;
 import structure.DividerSolution;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         RandomManager.setSeed(123);
 
         DividerInstance instance = new DividerInstance("graphs/example3.txt");
+
+        System.out.println("--- RANDOM ---");
+        Constructive<DividerInstance, DividerSolution> c = new ConstRandom();
+        DividerSolution s1 = c.constructSolution(instance);
+        System.out.println(s1.getModularity());
+
+        System.out.println("--- DIVIDER ---");
+        Constructive<DividerInstance, DividerSolution> d = new ConstDivider();
+        DividerSolution s2 = d.constructSolution(instance);
+        System.out.println(s2.getModularity());
 
         /*System.out.println("--- PERFECT ---");
         Constructive<DividerInstance, DividerSolution> d = new ConstPerfect();
@@ -23,35 +37,25 @@ public class Main {
         DividerSolution sS = s.constructSolution(instance);
         System.out.println(sS.toString());*/
 
-        /*System.out.println("--- RANDOM ---");
-        Constructive<DividerInstance, DividerSolution> c = new ConstRandom();
-        DividerSolution s1 = c.constructSolution(instance);
-        System.out.println(s1.toString());*/
+        double[] alphas = {0.0, 0.25, 0.5, 0.75, 1};
 
-        /*System.out.println("--- DIVIDER ---");
-        Constructive<DividerInstance, DividerSolution> d = new ConstDivider();
-        DividerSolution s2 = d.constructSolution(instance);
-        System.out.println(s2.toString());*/
+        int iters = 1000;
+        AlgorithmExecutor.EXECUTOR_TYPE t = AlgorithmExecutor.EXECUTOR_TYPE.MULTI;
 
-        /*System.out.println("--- GREEDY 1 ---");
-        Constructive<DividerInstance, DividerSolution> g1 = new ConstDividerGreedy(0.01);
-        DividerSolution s3 = g1.constructSolution(instance);
-        System.out.println(s3.toString());*/
-        double[] alphas = {0.0, 0.01, 0.25, 0.5, 0.75, 1};
-
-        /*System.out.println("--- GREEDY 2 ---");
+        System.out.println("--- GREEDY ---");
         for(double alpha: alphas){
-            Constructive<DividerInstance, DividerSolution> g2 = new ConstDividerGreedy2(alpha);
-            DividerSolution s4 = g2.constructSolution(instance);
-            System.out.println(s4.getModularity());
-        }*/
+            AlgorithmExecutor aex = new AlgorithmExecutor(t);
+            DividerSolution s = aex.calculateBestSolution(new ConstDividerGreedy(alpha), instance, iters);
+            System.out.println("ALPHA: "+alpha+" MOD: "+s.getModularity());
+        }
 
         System.out.println("--- GREEDY LOCAL SEARCH ---");
         for(double alpha: alphas){
-            Constructive<DividerInstance, DividerSolution> ls = new ConstDividerGreedyLS(alpha);
-            DividerSolution s5 = ls.constructSolution(instance);
-            System.out.println(s5.getModularity());
+            AlgorithmExecutor aex = new AlgorithmExecutor(t);
+            DividerSolution s = aex.calculateBestSolution(new ConstDividerGreedyLS(alpha), instance, iters);
+            System.out.println("ALPHA: "+alpha+" MOD: "+s.getModularity());
         }
+
 
     }
 }
