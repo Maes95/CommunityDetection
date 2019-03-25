@@ -24,7 +24,7 @@ public class ConstDividerGreedy implements Constructive<DividerInstance, Divider
         DividerSolution bestSolution = new DividerSolution(instance);
         bestSolution.startDestructive();
 
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 100; i++){
             Random rnd = new Random();
             rnd.setSeed(i);
             DividerSolution newSolution = getASolution(instance, rnd);

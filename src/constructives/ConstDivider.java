@@ -20,7 +20,7 @@ public class ConstDivider implements Constructive<DividerInstance, DividerSoluti
 
         DividerSolution bestSolution = sol;
 
-        do{
+        while(cluster < bestSolution.getClusterSize()){
 
             // GET WORST NODE
             int worstConnectedNode = bestSolution.getWorstConnected(cluster);
@@ -37,6 +37,7 @@ public class ConstDivider implements Constructive<DividerInstance, DividerSoluti
 
                 int node = nodes.poll();
                 computedNodes.add(node);
+                if(!auxSolution.getCluster(cluster).contains(node)) continue;
                 auxSolution.moveToCluster(node, cluster, cluster+1);
 
                 // IF ADD NODE (OR A SET OF NODES) IMPROVE THE MODULARITY, REPLACE SOLUTION
@@ -64,7 +65,7 @@ public class ConstDivider implements Constructive<DividerInstance, DividerSoluti
 
             computedNodes = new HashSet<>();
 
-        }while(cluster < bestSolution.getClusterSize() - 1);
+        }
 
         sol.removeEmptyClusters();
 

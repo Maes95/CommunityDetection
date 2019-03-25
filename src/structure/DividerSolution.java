@@ -34,6 +34,13 @@ public class DividerSolution implements Solution {
         return clusters.size()-1;
     }
 
+    public int whichClusterContains(int node){
+        for(int i = 0; i < clusters.size(); i++){
+            if(clusters.get(i).contains(node)) return i;
+        }
+        return -1;
+    }
+
     public void moveToCluster(int node, int src, int dest){
         if(!clusters.get(src).contains(node)) throw new Error("Can't move node: "+node+" "+src+"->"+dest+'\n'+
                 "SRC: "+src+ clusters.get(src) + '\n' +
@@ -135,5 +142,12 @@ public class DividerSolution implements Solution {
         s+="Conductance: "+getConductance()+"\n";
         s+="Coverage: "+getCoverage()+"\n";
         return s;
+    }
+
+    public void print(String name){
+        List<Integer> partition = new ArrayList<>(this.instance.getN());
+        for(int node = 0; node <this.instance.getN(); node++)
+            partition.add(whichClusterContains(node));
+        System.out.println(partition);
     }
 }

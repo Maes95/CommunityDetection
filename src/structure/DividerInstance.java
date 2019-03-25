@@ -10,7 +10,6 @@ public class DividerInstance implements Instance {
 
     private String name;
     private Set<Integer>[] graph;
-    private Map<Integer, Integer> nodeIds;
     private int n;
     private int m;
     private int minEdges = Integer.MAX_VALUE;
@@ -21,6 +20,7 @@ public class DividerInstance implements Instance {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void readInstance(String path) {
         try {
             name = path.substring(path.lastIndexOf('/')+1);
@@ -28,7 +28,6 @@ public class DividerInstance implements Instance {
             String line = bf.readLine();
             String[] tokens = line.split("\\s+");
             n = Integer.parseInt(tokens[0]);
-            nodeIds = new HashMap<>();
             graph = (HashSet<Integer>[]) new HashSet[n];
             for (int i=0;i<n;i++) {
                 graph[i] = new HashSet<>(n);
@@ -70,10 +69,6 @@ public class DividerInstance implements Instance {
 
     public int getMinEdges() {
         return minEdges;
-    }
-
-    public int getNodeID(int node) {
-        return nodeIds.get(node);
     }
 
     public boolean areAdyacents(int v, int u) {

@@ -50,7 +50,6 @@ public class ConstDividerGreedy2 implements Constructive<DividerInstance, Divide
         Set<Integer> computedNodes = new HashSet<>();
 
         DividerSolution bestSolution = finalSolution;
-        RestrictedList candidates = null;
         boolean firstIter = true;
         Cluster c = null;
 
@@ -73,7 +72,7 @@ public class ConstDividerGreedy2 implements Constructive<DividerInstance, Divide
                 baseNode = c.getRandomNode(rnd);
                 firstIter = false;
             }else{
-                candidates = new RestrictedList(instance, auxSolution.getCluster(cluster_index), mu, rnd);
+                RestrictedList candidates = new RestrictedList(instance, auxSolution.getCluster(cluster_index), mu, rnd);
                 if(!candidates.isEmpty()){
                     baseNode = candidates.getNode();
                 }else{
