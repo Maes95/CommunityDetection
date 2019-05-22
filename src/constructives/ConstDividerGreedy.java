@@ -25,11 +25,7 @@ public class ConstDividerGreedy implements Constructive<DividerInstance, Divider
 
     @Override
     public DividerSolution constructSolution(DividerInstance instance) {
-        return this.getASolution(instance, new Random());
-    }
-
-    protected DividerSolution getASolution(DividerInstance instance, Random rnd){
-
+        Random rnd = new Random();
         DividerSolution finalSolution = new DividerSolution(instance);
         finalSolution.startDestructive();
 

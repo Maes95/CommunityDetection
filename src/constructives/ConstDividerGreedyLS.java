@@ -20,7 +20,7 @@ public class ConstDividerGreedyLS extends ConstDividerGreedy {
 
     @Override
     public DividerSolution constructSolution(DividerInstance instance) {
-        DividerSolution newSolution = getASolution(instance, new Random());
+        DividerSolution newSolution = super.constructSolution(instance);
         local_search.improve(newSolution);
         return newSolution;
     }
