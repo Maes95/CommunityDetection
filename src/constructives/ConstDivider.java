@@ -20,7 +20,7 @@ public class ConstDivider implements Constructive<DividerInstance, DividerSoluti
 
         DividerSolution bestSolution = sol;
 
-        while(cluster < bestSolution.getClusterSize()){
+        while(cluster < bestSolution.getClusterSize() && bestSolution.getCluster(cluster).size() > 0){
 
             // GET WORST NODE
             int worstConnectedNode = bestSolution.getWorstConnected(cluster);

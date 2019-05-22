@@ -37,10 +37,10 @@ public class Main {
                 DividerSolution randomSolucion = c.constructSolution(instance);
                 System.out.println(randomSolucion.getModularity());
 
-                /*System.out.println("--- DIVIDER ---");
+                System.out.println("--- DIVIDER ---");
                 Constructive<DividerInstance, DividerSolution> d = new ConstDivider();
-                DividerSolution s2 = d.constructSolution(instance);
-                System.out.println(s2.getModularity());*/
+                DividerSolution dividerSolution = d.constructSolution(instance);
+                System.out.println(dividerSolution.getModularity());
 
                 double[] alphas = {0.0, 0.25, 0.5, 0.75, 1};
 
@@ -74,13 +74,13 @@ public class Main {
                         Integer.toString(instance.getN()), // N
                         Integer.toString(instance.getM()), // M
                         Double.toString(randomSolucion.getModularity()), // RANDOM
-                        Double.toString(0.0), // DIVIDER
+                        Double.toString(dividerSolution.getModularity()), // DIVIDER
                 };
 
                 String[] c1 = combine(greedyResults, greedyLSResults);
                 row = combine(row, c1);
                 csvWriter.append(String.join(",", row)+"\n");
-                break;
+                //break;
             }
         }
 
