@@ -12,6 +12,8 @@ public class ConstDivider implements Constructive<DividerInstance, DividerSoluti
     @Override
     public DividerSolution constructSolution(DividerInstance instance) {
 
+        long start = System.currentTimeMillis();
+
         DividerSolution sol = new DividerSolution(instance);
         sol.startDestructive();
 
@@ -68,6 +70,9 @@ public class ConstDivider implements Constructive<DividerInstance, DividerSoluti
         }
 
         sol.removeEmptyClusters();
+
+        long totalTime = System.currentTimeMillis() - start;
+        sol.setExecTime(totalTime);
 
         return sol;
     }

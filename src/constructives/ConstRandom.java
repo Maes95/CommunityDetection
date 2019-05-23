@@ -11,6 +11,7 @@ public class ConstRandom implements Constructive<DividerInstance, DividerSolutio
 
     @Override
     public DividerSolution constructSolution(DividerInstance instance) {
+        long start = System.currentTimeMillis();
         Random rnd = RandomManager.getRandom();
         DividerSolution sol = new DividerSolution(instance);
         int nclusters = 1+rnd.nextInt(instance.getN()-1);
@@ -22,6 +23,8 @@ public class ConstRandom implements Constructive<DividerInstance, DividerSolutio
             int c = rnd.nextInt(nclusters);
             sol.addToCluster(c, i);
         }
+        long totalTime = System.currentTimeMillis() - start;
+        sol.setExecTime(totalTime);
         return sol;
     }
 

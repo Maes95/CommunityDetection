@@ -36,10 +36,10 @@ public class AlgorithmExecutor {
         executor.shutdown();
         executor.awaitTermination(5 * iters, TimeUnit.MINUTES);
 
-        long total = System.currentTimeMillis() - start;
-        System.out.println("TOTAL TIME: "+total +" ms");
+        long totalTime = System.currentTimeMillis() - start;
+        System.out.println("TOTAL TIME: "+totalTime +" ms");
 
-        return results.stream()
+        DividerSolution best = results.stream()
                 .map((Future<DividerSolution> f )->{
                     DividerSolution s = null;
                     try {
@@ -52,6 +52,10 @@ public class AlgorithmExecutor {
                 .sorted(Comparator.comparing(DividerSolution::getModularity))
                 .collect(Collectors.toList())
                 .get(iters-1);
+
+        best.setExecTime(totalTime);
+
+        return best;
     }
 
 }

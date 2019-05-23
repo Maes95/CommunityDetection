@@ -7,6 +7,7 @@ public class DividerSolution implements Solution {
 
     private DividerInstance instance;
     private ArrayList<Cluster> clusters;
+    private long execTime = 0;
 
     public DividerSolution(DividerInstance instance){
         this.instance = instance;
@@ -128,9 +129,28 @@ public class DividerSolution implements Solution {
         }
     }
 
+    public boolean isBetterThan(DividerSolution other){
+        return this.getModularity() >= other.getModularity();
+    }
+
     public DividerInstance getInstance(){
         return this.instance;
     }
+
+    public void setExecTime(long execTime){
+        this.execTime = execTime;
+    }
+    public long getExecTime(){
+        return execTime;
+    }
+
+    public List<Integer> getSolutionAsList(){
+        List<Integer> partition = new ArrayList<>(this.instance.getN());
+        for(int node = 0; node <this.instance.getN(); node++)
+            partition.add(whichClusterContains(node));
+        return partition;
+    }
+
 
     @Override
     public String toString() {
@@ -142,12 +162,5 @@ public class DividerSolution implements Solution {
         s+="Conductance: "+getConductance()+"\n";
         s+="Coverage: "+getCoverage()+"\n";
         return s;
-    }
-
-    public void print(String name){
-        List<Integer> partition = new ArrayList<>(this.instance.getN());
-        for(int node = 0; node <this.instance.getN(); node++)
-            partition.add(whichClusterContains(node));
-        System.out.println(partition);
     }
 }
