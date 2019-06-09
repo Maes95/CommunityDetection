@@ -1,3 +1,0 @@
-Instance, N, M, Random,,,,Divider,,,,DividerGreedy 0.25,,,,DividerGreedy 0.5,,,,DividerGreedy 0.75,,,,DividerGreedyLS 0.25,,,,DividerGreedyLS 0.5,,,,DividerGreedyLS 0.75,,,,Best,,,,
-,,,Mod,T(ms), Dev(%), # Best,Mod,T(ms), Dev(%), # Best,Mod,T(ms), Dev(%), # Best,Mod,T(ms), Dev(%), # Best,Mod,T(ms), Dev(%), # Best,Mod,T(ms), Dev(%), # Best,Mod,T(ms), Dev(%), # Best,Mod,T(ms), Dev(%), # Best,Mod,T(ms), Dev(%), # Best
-1000_0.1network.txt,1000,10434,-6.22072404583753E-4,1,-1,0,0.40508894522114397,2018,-1,0,0.5421808381124079,1657,-1,0,0.5195051994722875,1680,-1,0,0.47306840933650174,1311,-1,0,0.8296126057051877,12407,-1,0,0.670950891368287,29619,-1,0,0.7874734050360787,22011,-1,0,0.8296126057051877,12407,-1,0

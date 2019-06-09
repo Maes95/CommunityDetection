@@ -9,21 +9,27 @@ import structure.DividerSolution;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class Main {
 
-    private static final int ITERS = 1;
-    private static final String PATH_TO_GRAPHS = "graphs/";
+    private static final int ITERS = 100;
+    private static final String PATH_TO_GRAPHS_TRAIN = "graphs/train/";
     private static final double[] ALPHAS = {0.25, 0.5, 0.75};
+    private static final int N_ALGORITHMS = 8+1;
     private static final AlgorithmExecutor.EXECUTOR_TYPE EXECUTOR_TYPE = AlgorithmExecutor.EXECUTOR_TYPE.MULTI;
 
     public static void main(String[] args) throws Exception {
         RandomManager.setSeed(123);
+        train();
+    }
 
+    public static void train() throws Exception {
 
-        FileWriter csvWriter = new FileWriter("results.csv");
+        FileWriter csvWriter = new FileWriter("results-train.csv");
         String header1 = "Instance, N, M, " +
                 "Random,,,,"+
                 "Divider,,,,"+
@@ -37,7 +43,7 @@ public class Main {
 
 
         String header2 = ",,";
-        for(int i = 0; i <9; i++){
+        for(int i = 0; i <N_ALGORITHMS; i++){
             header2 += ",Mod,T(ms), Dev(%), # Best";
         }
         csvWriter.append(header1+"\n");
@@ -45,17 +51,19 @@ public class Main {
 
         // Describe instances
 
-        File[] files = new File(PATH_TO_GRAPHS).listFiles();
+        File[] files = new File(PATH_TO_GRAPHS_TRAIN).listFiles();
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".txt")) {
-                DividerInstance instance = new DividerInstance(PATH_TO_GRAPHS+file.getName());
+                DividerInstance instance = new DividerInstance(PATH_TO_GRAPHS_TRAIN+file.getName());
                 System.out.println(file.getName()+" "+instance.getN()+" "+instance.getM());
 
                 String[] row = {
                         file.getName(), // Instance
                         Integer.toString(instance.getN()), // N
-                        Integer.toString(instance.getM()), // M
+                        Integer.toString(instance.getM()) // M
                 };
+
+                List<DividerSolution> solutions = new ArrayList<>(N_ALGORITHMS-1);
 
 
                 System.out.println("--- RANDOM ---");
@@ -64,7 +72,7 @@ public class Main {
                 System.out.println(randomSolucion.getModularity());
 
                 DividerSolution best = randomSolucion;
-                row = concat(row, getRow(randomSolucion));
+                solutions.add(randomSolucion);
 
                 System.out.println("--- DIVIDER ---");
                 Constructive<DividerInstance, DividerSolution> d = new ConstDivider();
@@ -72,42 +80,38 @@ public class Main {
                 System.out.println(dividerSolution.getModularity());
 
                 if(dividerSolution.isBetterThan(best)) best = dividerSolution;
-                row = concat(row, getRow(dividerSolution));
+                solutions.add(dividerSolution);
 
                 System.out.println("--- GREEDY ---");
-                String[] greedyResults = new String[ALPHAS.length];
-                int i = 0;
                 for(double alpha: ALPHAS){
                     AlgorithmExecutor aex = new AlgorithmExecutor(EXECUTOR_TYPE);
                     DividerSolution greedySolution = aex.calculateBestSolution(new ConstDividerGreedy(alpha), instance, ITERS);
                     System.out.println("ALPHA: "+alpha+" MOD: "+greedySolution.getModularity());
-                    greedyResults[i] = Double.toString(greedySolution.getModularity());
                     if(greedySolution.isBetterThan(best)) best = greedySolution;
-                    row = concat(row, getRow(greedySolution));
-                    i++;
+                    solutions.add(greedySolution);
                 }
 
                 System.out.println("--- GREEDY LOCAL SEARCH ---");
-                String[] greedyLSResults = new String[ALPHAS.length];
-                int j = 0;
                 for(double alpha: ALPHAS){
                     AlgorithmExecutor aex = new AlgorithmExecutor(EXECUTOR_TYPE);
                     DividerSolution greedyLSSolution = aex.calculateBestSolution(new ConstDividerGreedyLS(alpha), instance, ITERS);
                     System.out.println("ALPHA: "+alpha+" MOD: "+greedyLSSolution.getModularity());
-                    greedyLSResults[j] = Double.toString(greedyLSSolution.getModularity());
                     if(greedyLSSolution.isBetterThan(best)) best = greedyLSSolution;
-                    row = concat(row, getRow(greedyLSSolution));
-                    j++;
+                    solutions.add(greedyLSSolution);
                 }
 
-                row = concat(row, getRow(best));
+
+                double bestMod = best.getModularity();
+                for(DividerSolution s: solutions){
+                    String[] aux = getRow(s,(bestMod-s.getModularity())/bestMod,bestMod==s.getModularity());
+                    row = concat(row, aux);
+                }
+
+                row = concat(row, getRow(best,0,true));
                 csvWriter.append(String.join(",", row)+"\n");
                 csvWriter.flush();
-                break;
             }
         }
-
-
     }
 
     public static String[] concat(String[] ...arrays) {
@@ -116,12 +120,12 @@ public class Main {
                 .toArray(String[]::new);
     }
 
-    public static String[] getRow(DividerSolution dividerSolution){
+    public static String[] getRow(DividerSolution dividerSolution, double dev, boolean isBest){
         String[] row = {
                 Double.toString(dividerSolution.getModularity()),
                 Long.toString(dividerSolution.getExecTime()),
-                "-1",
-                "0"
+                Double.toString(dev),
+                isBest ? "1" : "0"
         };
         return row;
     }
