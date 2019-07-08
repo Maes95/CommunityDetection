@@ -26,8 +26,8 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         RandomManager.setSeed(123);
+        train();
         test();
-        //train();
     }
 
     public static void test() throws Exception {
@@ -36,6 +36,11 @@ public class Main {
         csvWriter.append(",,,Mod,T(ms), Dev(%), # Best\n");
 
         File[] files = new File(PATH_TO_GRAPHS_TEST).listFiles();
+        
+        String output_path = "results/divider_greedy_ls/";
+        File dir = new File(output_path)
+        if (!dir.exists()) dir.mkdir()
+
         for (File file : files) {
             if (file.isFile() && file.getName().endsWith(".txt")) {
 
@@ -44,7 +49,7 @@ public class Main {
                 System.out.println("--- GREEDY LOCAL SEARCH ---");
                 double alpha = 0.25;
                 AlgorithmExecutor aex = new AlgorithmExecutor(EXECUTOR_TYPE);
-                DividerSolution greedyLSSolution = aex.calculateBestSolution(new ConstDividerGreedyLS(alpha), instance, 100);
+                DividerSolution greedyLSSolution = aex.calculateBestSolution(new ConstDividerGreedyLS(alpha), instance, 1);
                 System.out.println("ALPHA: "+alpha+" MOD: "+greedyLSSolution.getModularity());
 
                 String[] row = {
@@ -59,7 +64,7 @@ public class Main {
                 csvWriter.flush();
 
                 String solution = greedyLSSolution.getSolutionAsList().toString();
-                String filename = "results/community_"+file.getName();
+                String filename = output_path+"/community_"+file.getName();
                 BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
                 bw.write(solution);
                 bw.close();
